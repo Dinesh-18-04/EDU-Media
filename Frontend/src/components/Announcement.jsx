@@ -3,13 +3,29 @@ import logo from "../assets/Logo.png";
 import { IoMenu } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { RiAccountCircleLine } from "react-icons/ri";
+import { LuLogOut } from "react-icons/lu";
 
 const Announcement = () => {
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
+  const [name, setName] = useState("");
+
+  const handlePricingClick = () => {
+  if (window.location.pathname === "/") {
+    const el = document.getElementById("price");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  } else {
+    navigate("/", { state: { scrollTo: "price" } });
+  }
+};
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const storedName = localStorage.getItem("name");
+    setName(storedName);
     if (token) {
       try {
         const decoded = jwtDecode(token);
@@ -30,10 +46,12 @@ const Announcement = () => {
   }, []);
 
   const handleLogout = () => {
+    localStorage.removeItem("name");
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     localStorage.setItem("isLogin", "false");
     setIsLogin(false);
+    setName("");
     navigate("/login");
   };
 
@@ -62,7 +80,10 @@ const Announcement = () => {
             <li className="hover:bg-slate-200 px-3.5 py-2 rounded-md">
               About Us
             </li>
-            <li className="hover:bg-slate-200 px-3.5 py-2 rounded-md">
+            <li
+              onClick={handlePricingClick}
+              className="hover:bg-slate-200 px-3.5 py-2 rounded-md cursor-pointer"
+            >
               Pricing
             </li>
             <li className="hover:bg-slate-200 px-3.5 py-2 rounded-md">
@@ -86,12 +107,19 @@ const Announcement = () => {
               </Link>
             </>
           ) : (
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 text-white font-semibold md:px-7 px-4 md:py-3 py-1 rounded-md"
-            >
-              Logout
-            </button>
+            <>
+              <div className="relative group flex items-center gap-2">
+                <p className="text-xl font-semibold">{name}</p>
+                <RiAccountCircleLine className="text-[30px]" />
+                <div className="absolute top-8 right-0 hidden group-hover:flex bg-white shadow-lg rounded-md px-3 py-2 z-10">
+                  <LuLogOut
+                    onClick={handleLogout}
+                    className="cursor-pointer text-[20px] text-red-500"
+                    title="Logout"
+                  />
+                </div>
+              </div>
+            </>
           )}
           <div className="md:hidden">
             <IoMenu className="text-2xl" />

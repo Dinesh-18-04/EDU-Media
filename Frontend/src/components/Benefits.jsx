@@ -48,6 +48,7 @@ const Benefits = () => {
         <video
           src={vid}
           autoPlay
+          loop
           muted
           className="mx-auto md:w-[1400px] md:h-[720px] object-cover rounded-md"
         />

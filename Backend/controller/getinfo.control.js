@@ -14,7 +14,6 @@ export const getInfo = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("Fetched subscription info:", info);
     return res.status(200).json({ isSubscription: info.isSubscription });
   } catch (error) {
     console.error("Error fetching subscription info:", error);
@@ -35,3 +34,31 @@ export const proCancel = async (req, res) => {
     console.log(error);
   }
 };
+
+export const free = async (req,res) =>{
+  try {
+    const email = req.user.email;
+    const info = await subscriptionModel.findOneAndUpdate(
+      {email:email},
+      {isFree:true},
+      {new:true}
+    );
+    res.status(200).json({isfree: info.isFree});
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const freecancel = async (req,res) => {
+  try {
+    const email = req.user.email;
+    const info = await subscriptionModel.findOneAndUpdate(
+      {email:email},
+      {isfree:false},
+      {new:true}
+    );
+    res.status(200).json({isFree:info.isFree});
+  } catch (error) {
+    console.log(error);
+  }
+}

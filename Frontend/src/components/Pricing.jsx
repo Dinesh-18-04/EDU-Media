@@ -70,9 +70,9 @@ const Pricing = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token"); // ✅ move this inside
   const isLogin = localStorage.getItem("isLogin") === "true";
-  console.log(isLogin);
 
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isFree, setIsFree] = useState(false);
 
   const fetchSubscription = async () => {
     try {
@@ -82,8 +82,8 @@ const Pricing = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      setIsSubscribed(res.data.isSubscription); // ✅ assuming this is boolean
+      setIsSubscribed(res.data.isSubscription);
+      setIsFree(res.data.isFree);
     } catch (err) {
       console.log("Failed to fetch subscription:", err);
     }
@@ -93,19 +93,18 @@ const Pricing = () => {
     fetchSubscription();
   }, []);
 
-  const handleLoginAlert = async(req,res) =>{
+  const handleLoginAlert = async (req, res) => {
     try {
-      if(isLogin != true){
+      if (isLogin != true) {
         alert("LogIn to Continue the payment.");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const handleProCancel = async () => {
-    console.log("")
-    setIsSubscribed(false)
+    setIsSubscribed(false);
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
@@ -117,7 +116,6 @@ const Pricing = () => {
           },
         }
       );
-      console.log(res)
       if (res.status === 200) {
         alert("Subscription cancelled successfully!");
         await fetchSubscription();
@@ -130,14 +128,63 @@ const Pricing = () => {
     }
   };
 
+  // const handleFree = async (req, res) => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await axios.post(
+  //       "http://localhost:5000/api/free",
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     if(res.status === 200){
+  //       alert("Free Subscription Activated.");
+  //       await fetchSubscription();
+  //       setIsFree(true);
+  //     }
+  //     else{
+  //       alert("something went wrong");
+  //     }
+
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // const handleFreeCancel = async (req,res) => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await axios.post(
+  //       "http://localhost:5000/api/freecancel",
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     if(res.status === 200){
+  //       alert("Free Subscription Cancelled.");
+  //       await fetchSubscription();
+  //       setIsFree(false);
+  //     }
+  //     else{
+  //       alert("something went wrong");
+  //     }
+      
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+    
+  // }
+
   const handleProPayment = async (req, res) => {
     try {
       const token = localStorage.getItem("token");
       const email = localStorage.getItem("email");
-      
-
-      console.log("TOKEN:", token);
-      console.log("EMAIL:", email);
 
       const { data } = await axios.post(
         "http://localhost:5000/api/create-order",
@@ -148,6 +195,7 @@ const Pricing = () => {
           },
         }
       );
+      await fetchSubscription();
 
       const options = {
         key: data.key,
@@ -192,7 +240,7 @@ const Pricing = () => {
   };
 
   return (
-    <div className="md:mx-[5.5rem] mx-[1rem]">
+    <div className="md:mx-[5.5rem] mx-[1rem]" id="price">
       <div className="md:mt-[6.9rem] mt-[2rem]">
         <h1 className="md:text-[3rem] text-[35px] font-semibold">
           Our Pricing
@@ -236,12 +284,12 @@ const Pricing = () => {
               </div>
             </div>
             <div className="mt-3">
-              {isSubscribed ? (
-                <button className="text-white bg-[#ff9500] text-center w-full md:p-5 p-3 rounded-b-lg">
-                  Cancel
+              {isLogin ? (
+                <button  className="text-white bg-[#ff9500] text-center w-full md:p-5 p-3 rounded-b-lg">
+                  Activated
                 </button>
               ) : (
-                <button className="text-white bg-[#ff9500] text-center w-full md:p-5 p-3 rounded-b-lg">
+                <button onClick={handleLoginAlert} className="text-white bg-[#ff9500] text-center w-full md:p-5 p-3 rounded-b-lg">
                   Get Started
                 </button>
               )}
@@ -279,14 +327,14 @@ const Pricing = () => {
             <div className="mt-3">
               {isSubscribed ? (
                 <button
-                  onClick={isLogin?handleProCancel:handleLoginAlert}
+                  onClick={isLogin ? handleProCancel : handleLoginAlert}
                   className="text-black bg-slate-400 text-center w-full md:p-5 font-semibold p-3 rounded-b-lg"
                 >
                   Cancel
                 </button>
               ) : (
                 <button
-                  onClick={isLogin?handleProPayment:handleLoginAlert}
+                  onClick={isLogin ? handleProPayment : handleLoginAlert}
                   className="text-white bg-[#ff9500] text-center w-full md:p-5 p-3 rounded-b-lg"
                 >
                   Get Started

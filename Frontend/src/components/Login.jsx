@@ -10,7 +10,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [islogin,setIsLogin] = useState(false);
   const navigate = useNavigate();
-  // console.log(email);
 
   async function sendData() {
     try {
@@ -19,6 +18,7 @@ const Login = () => {
         password,
       });
       if(res.status == 200){
+        localStorage.setItem("name",res.data.user.name);
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("isLogin", "true");
         localStorage.setItem("email", res.data.user.email);

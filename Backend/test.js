@@ -13,7 +13,7 @@ instance.orders.create({
   receipt: `receipt_test_${Date.now()}`,
 })
 .then((order) => {
-  console.log("✅ Order Created:", order);
+  console.log("✅ Order Created:");
 })
 .catch((err) => {
   console.error("❌ Error:", err);

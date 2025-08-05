@@ -4,58 +4,36 @@ import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import { useEffect } from "react";
 import { useState } from "react";
-
-import co1 from "../assets/co1.png";
-import co2 from "../assets/co2.png";
-import co3 from "../assets/co3.png";
-
-// const list = [
-//   {
-//     title: "Web Design Fundamentals",
-//     des: "Learn the fundamentals of web design, including HTML, CSS, and responsive design principles. Develop the skills to create visually appealing and user-friendly websites.",
-//     img1: co1,
-//     img2: co2,
-//     img3: co3,
-//     week: "4",
-//     level: "Beginner",
-//     name: "John Smith",
-//     curriculam: [
-//       {
-//         t: "01",
-//         f: "Introduction to HTML",
-//       },
-//       {
-//         t: "02",
-
-//         f: "Styling with CSS",
-//       },
-//       {
-//         t: "03",
-
-//         f: "Introduction to Responsive Design",
-//       },
-//       {
-//         t: "04",
-
-//         f: "Design Principles for Web",
-//       },
-//       {
-//         t: "05",
-
-//         f: "Building a Basic Website",
-//       },
-//     ],
-//   },
-// ];
+import { useNavigate } from "react-router-dom";
 
 const Course = () => {
   const [list, setlist] = useState([]);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const navigate = useNavigate();
+  const isLogin = localStorage.getItem("isLogin") === "true";
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/getcourse")
       .then((res) => setlist(res.data))
       .catch((err) => console.error(err));
+
+    fetchSubscriptionStatus();
   }, []);
+
+  const fetchSubscriptionStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5000/api/getinfo", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setIsSubscribed(res.data.isSubscription);
+    } catch (err) {
+      console.error("Failed to fetch subscription:", err);
+    }
+  };
+
   return (
     <div>
       <Announcement />
@@ -92,7 +70,28 @@ const Course = () => {
                     {Element.description}
                   </p>
                 </div>
-                <button className="bg-[#fcfcfd] border max-md:text-sm border-gray-200 md:w-[165px] w-[110px] max-md:mt-4 md:h-[50px] h-[35px] font-semibold rounded-lg">
+
+                <button
+                  onClick={() => {
+                    if (isLogin === true) {
+                      if (Element.coursetype === false) {
+                        navigate(`/course/${Element._id}`);
+                      } else {
+                        if (isSubscribed) {
+                          navigate(`/course/${Element._id}`);
+                        } else {
+                          alert(
+                            "Please subscribe to the Pro Plan to access this paid course."
+                          );
+                        }
+                      }
+                    }
+                    else{
+                      alert("LogIn to continue the free course.");
+                    }
+                  }}
+                  className="bg-[#fcfcfd] border max-md:text-sm border-gray-200 md:w-[165px] w-[110px] max-md:mt-4 md:h-[50px] h-[35px] font-semibold rounded-lg"
+                >
                   View Course
                 </button>
               </div>
@@ -103,7 +102,7 @@ const Course = () => {
                 <div className="">
                   <img
                     key={idx}
-                    src={`http://localhost:5000${img}`} // prepend server base URL
+                    src={`http://localhost:5000${img}`}
                     alt={`Course Img ${idx + 1}`}
                     className="rounded-md w-[430px] h-[360px] object-cover"
                   />
@@ -120,7 +119,7 @@ const Course = () => {
                   {Element.level}
                 </div>
                 <div className="border border-solid border-gray-300 md:px-4 px-2 py-1 rounded-md md:py-1.5 text-gray-600 font-medium md:font-semibold">
-                  {Element.coursetype == true ? "Paid":"free"}
+                  {Element.coursetype == true ? "Paid" : "free"}
                 </div>
               </div>
               <div className="font-semibold max-md:mt-3 text-[18px] text-gray-700">

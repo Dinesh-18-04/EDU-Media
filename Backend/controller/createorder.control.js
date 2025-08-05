@@ -6,7 +6,6 @@ dotenv.config();
 
 export const createOrder = async (req, res) => {
   const { email } = req.body;
-  console.log(email)
   try {
 
     if (!email) {
@@ -22,7 +21,7 @@ export const createOrder = async (req, res) => {
     const order = await razorpay.orders.create(options);
 
     // Debug log Razorpay order
-    console.log("Created Razorpay Order:", order);
+    console.log("Created Razorpay Order:");
 
     const sub = await subscriptionModel.findOneAndUpdate(
       { email },
@@ -35,7 +34,6 @@ export const createOrder = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    console.log("Subscription DB record:", sub);
 
     res.json({
       key: process.env.RAZORPAY_KEY_ID,
