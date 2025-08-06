@@ -6,8 +6,15 @@ export const addcourse = async (req, res) => {
       req.body;
 
     let curriculam = req.body.curriculam;
+    let videos = req.body.videos;
     if (typeof curriculam === "string") {
       curriculam = JSON.parse(curriculam);
+    }
+    if (typeof videos === "string") {
+      videos = JSON.parse(videos);
+    }
+    if (Array.isArray(videos)) {
+      videos = videos.map((link) => ({ v: link }));
     }
 
     const imagePaths = (req.files || []).map(
@@ -23,6 +30,7 @@ export const addcourse = async (req, res) => {
       images: imagePaths,
       curriculam,
       coursetype: coursetype === "true" || coursetype === true,
+      videos,
     });
 
     await newCourse.save();
@@ -45,7 +53,6 @@ export const getcourse = async (req, res) => {
 export const coursedetails = async (req, res) => {
   try {
     const {id} = req.params;
-    console.log(id)
     const course = await courseModel.findById(id);
     res.json(course);
   } catch (error) {

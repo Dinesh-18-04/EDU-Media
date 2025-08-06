@@ -14,7 +14,12 @@ const courseSchema = new mongoose.Schema({
   ],
   coursetype: {
     type: Boolean,
-  }
+  },
+  videos: [
+    {
+      v: String,
+    }
+  ],
 });
 
 export default mongoose.model("course", courseSchema);
