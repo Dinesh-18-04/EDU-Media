@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Announcement from "./Announcement";
 import vid from "../assets/vid1.mp4";
+import ReactPlayer from "react-player";
 
 const Coursedetails = () => {
   const { id } = useParams();
@@ -34,6 +35,24 @@ const Coursedetails = () => {
     );
   }
 
+  const getEmbedUrl = (url) => {
+    if (!url) return "";
+
+    if (url.includes("youtu.be")) {
+      // Short link format
+      const videoId = url.split("youtu.be/")[1].split("?")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    if (url.includes("watch?v=")) {
+      // Normal watch link
+      const videoId = url.split("v=")[1].split("&")[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    return url;
+  };
+
   return (
     <div>
       <Announcement />
@@ -44,15 +63,28 @@ const Coursedetails = () => {
         </div>
       </div>
       <div className="md:mt-[5.5rem] mt-[2rem]">
-        <video
-          src={link}
-          controls
-          className="mx-auto md:w-[1400px] md:h-[720px] object-cover rounded-md"
-        />
+        {link.endsWith(".mp4") ? (
+          <video
+            src={link}
+            controls
+            className="mx-auto md:w-[1400px] md:h-[720px] object-cover rounded-md"
+          />
+        ) : (
+          <div className="mx-auto md:w-[1400px] md:h-[720px] object-cover rounded-md">
+            <iframe
+              className="w-full h-[200px] md:h-[720px] rounded-md"
+              src={getEmbedUrl(link)}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
       </div>
 
-      <div className="mx-20 my-10 mt-20">
-        <div className="grid grid-cols-2 gap-10">
+      <div className="md:mx-20 mx-10 my-10 mt-20">
+        <div className="grid md:grid-cols-2 md:gap-10 gap-5">
           {course.curriculam.map((item, index) => (
             <div
               key={index}
@@ -65,8 +97,12 @@ const Coursedetails = () => {
               <div className=" mt-5">
                 <button
                   onClick={() => {
-                    setLink(course.videos[index]?.v || vid);
-                    console.log(link)
+                    const newLink =
+                      course.videos && course.videos[index]
+                        ? course.videos[index].v
+                        : vid;
+                    setLink(newLink);
+                    console.log(newLink);
                   }}
                   className=" hover:scale-105 transition-all bg-transparent text-black border-2 font-semibold md:px-4 px-4 py-2 md:py-2 max-md:text-[15px] rounded-md"
                 >

@@ -90,7 +90,7 @@ const Course = () => {
                       alert("LogIn to continue the free course.");
                     }
                   }}
-                  className="bg-[#fcfcfd] border max-md:text-sm border-gray-200 md:w-[165px] w-[110px] max-md:mt-4 md:h-[50px] h-[35px] font-semibold rounded-lg"
+                  className="bg-[#fcfcfd] border max-md:text-sm border-gray-200 md:min-w-[165px] w-[110px] max-md:mt-4 md:h-[50px] h-[35px] font-semibold rounded-lg"
                 >
                   View Course
                 </button>
@@ -104,7 +104,7 @@ const Course = () => {
                     key={idx}
                     src={`http://localhost:5000${img}`}
                     alt={`Course Img ${idx + 1}`}
-                    className="rounded-md w-[430px] h-[360px] object-cover"
+                    className="rounded-md w-[430px] md:h-[360px] h-[100px] object-cover"
                   />
                 </div>
               ))}
