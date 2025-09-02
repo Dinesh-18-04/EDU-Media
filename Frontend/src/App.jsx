@@ -9,6 +9,7 @@ import Addcourse from "./components/Addcourse";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Coursedetails from "./components/Coursedetails";
+import About from "./components/About";
 
 function AppRoutes() {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/course/:id" element={<Coursedetails />} />
+      <Route path="/about" element={<About/>}/>
     </Routes>
   );
 }

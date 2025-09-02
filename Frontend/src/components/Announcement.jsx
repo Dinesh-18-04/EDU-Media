@@ -12,15 +12,15 @@ const Announcement = () => {
   const [name, setName] = useState("");
 
   const handlePricingClick = () => {
-  if (window.location.pathname === "/") {
-    const el = document.getElementById("price");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+    if (window.location.pathname === "/") {
+      const el = document.getElementById("price");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate("/", { state: { scrollTo: "price" } });
     }
-  } else {
-    navigate("/", { state: { scrollTo: "price" } });
-  }
-};
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -77,9 +77,11 @@ const Announcement = () => {
                 Courses
               </li>
             </Link>
-            <li className="hover:bg-slate-200 px-3.5 py-2 rounded-md">
-              About Us
-            </li>
+            <Link to="/about">
+              <li className="hover:bg-slate-200 px-3.5 py-2 rounded-md">
+                About Us
+              </li>
+            </Link>
             <li
               onClick={handlePricingClick}
               className="hover:bg-slate-200 px-3.5 py-2 rounded-md cursor-pointer"
